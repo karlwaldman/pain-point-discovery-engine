@@ -102,6 +102,60 @@ This guide will help you get API credentials for Twitter and Reddit.
 
 ---
 
+## Firecrawl API ⚠️ (Twitter Blocked, But Useful for Other Sites)
+
+**Status:** ✅ API key available from OilPriceAPI, ❌ Twitter explicitly blocked
+
+### Investigation Results
+
+We tested if Firecrawl could scrape Twitter instead of using the Twitter API.
+
+**Result:** ❌ **Twitter/X is explicitly blocked by Firecrawl**
+
+**Error returned:**
+```
+403 Forbidden: "This website is not currently supported.
+               If you are part of an enterprise, please reach out to
+               help@firecrawl.com to discuss the possibility of
+               getting it activated on your account."
+```
+
+### Why Twitter is Blocked
+
+1. **Legal:** Twitter's TOS prohibits unauthorized scraping
+2. **Technical:** Twitter requires auth, heavy anti-bot measures
+3. **Business:** Firecrawl would face legal issues enabling Twitter scraping
+
+### What We CAN Use Firecrawl For
+
+Even though Twitter is blocked, Firecrawl works great for:
+- ✅ HackerNews (public discussions, no API needed)
+- ✅ Indie Hackers forums
+- ✅ Product Hunt comments
+- ✅ GitHub issues and discussions
+- ✅ Reddit (alternative to PRAW if needed)
+
+### API Key Available
+
+**Source:** OilPriceAPI (docker-compose.yml)
+**Status:** ✅ Valid and working
+**Credits:** Plenty available
+
+**Already added to .env:**
+```bash
+FIRECRAWL_API_KEY=fc-7bc589aecae14616944ed4a8ece0c854
+```
+
+### Testing
+
+```bash
+python scripts/test_firecrawl_twitter.py
+```
+
+See full investigation: **[FIRECRAWL-INVESTIGATION.md](FIRECRAWL-INVESTIGATION.md)**
+
+---
+
 ## Facebook/Meta API ❌ (Not Recommended)
 
 **Why we're NOT using Facebook:**
