@@ -5,8 +5,9 @@ Flask-Login==0.6.3
 # Database
 # SQLite is built into Python, no package needed
 
-# Twitter API
-tweepy==4.14.0
+# Social Media APIs
+tweepy==4.14.0  # Twitter/X
+praw==7.7.1     # Reddit
 
 # Email
 sendgrid==6.11.0
