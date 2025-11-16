@@ -1,21 +1,92 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+interface Broker {
+  mc: string;
+  name: string;
+  city: string;
+  state: string;
+}
 
 export default function Home() {
+  const [searchQuery, setSearchQuery] = useState('');
   const [mcNumber, setMcNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [brokers, setBrokers] = useState<Broker[]>([]);
+  const [filteredBrokers, setFilteredBrokers] = useState<Broker[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // Load brokers data on mount
+  useEffect(() => {
+    fetch('/brokers.json')
+      .then(res => res.json())
+      .then(data => setBrokers(data))
+      .catch(err => console.error('Failed to load brokers:', err));
+  }, []);
+
+  // Filter brokers as user types
+  useEffect(() => {
+    if (!searchQuery.trim() || searchQuery.length < 2) {
+      setFilteredBrokers([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = brokers.filter(broker =>
+      broker.mc.includes(query) ||
+      broker.name.toLowerCase().includes(query) ||
+      broker.city.toLowerCase().includes(query) ||
+      broker.state.toLowerCase().includes(query)
+    ).slice(0, 10); // Limit to 10 suggestions
+
+    setFilteredBrokers(filtered);
+    setShowSuggestions(filtered.length > 0);
+    setSelectedIndex(-1);
+  }, [searchQuery, brokers]);
+
+  const handleSelectBroker = (broker: Broker) => {
+    setSearchQuery(broker.name);
+    setMcNumber(broker.mc);
+    setShowSuggestions(false);
+    setSelectedIndex(-1);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSuggestions) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex(prev =>
+        prev < filteredBrokers.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
+    } else if (e.key === 'Enter' && selectedIndex >= 0) {
+      e.preventDefault();
+      handleSelectBroker(filteredBrokers[selectedIndex]);
+    } else if (e.key === 'Escape') {
+      setShowSuggestions(false);
+      setSelectedIndex(-1);
+    }
+  };
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!mcNumber.trim()) return;
+    const mcToVerify = mcNumber || searchQuery.replace(/\D/g, '');
+    if (!mcToVerify.trim()) return;
 
     setLoading(true);
     setResult(null);
+    setShowSuggestions(false);
 
     try {
-      const response = await fetch(`/api/verify/${mcNumber}`);
+      const response = await fetch(`/api/verify/${mcToVerify}`);
       const data = await response.json();
       setResult(data);
     } catch (error) {
@@ -69,27 +140,70 @@ export default function Home() {
             {/* Search Form */}
             <form onSubmit={handleVerify} className="max-w-2xl mx-auto">
               <div className="bg-white rounded-lg shadow-2xl p-6">
-                <label htmlFor="mc-number" className="block text-left text-sm font-medium text-gray-700 mb-2">
-                  Enter Broker MC Number
+                <label htmlFor="broker-search" className="block text-left text-sm font-medium text-gray-700 mb-2">
+                  Search by Company Name or MC Number
                 </label>
                 <div className="flex gap-3">
-                  <input
-                    type="text"
-                    id="mc-number"
-                    value={mcNumber}
-                    onChange={(e) => setMcNumber(e.target.value.replace(/\D/g, ''))}
-                    placeholder="e.g., 123456"
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent text-gray-900 text-lg"
-                    disabled={loading}
-                  />
+                  <div className="flex-1 relative">
+                    <input
+                      type="text"
+                      id="broker-search"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setMcNumber('');
+                      }}
+                      onKeyDown={handleKeyDown}
+                      onFocus={() => filteredBrokers.length > 0 && setShowSuggestions(true)}
+                      placeholder="e.g., C.H. Robinson or 139867"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent text-gray-900 text-lg"
+                      disabled={loading}
+                      autoComplete="off"
+                    />
+
+                    {/* Autocomplete Dropdown */}
+                    {showSuggestions && filteredBrokers.length > 0 && (
+                      <div
+                        ref={suggestionsRef}
+                        className="absolute z-50 w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-xl max-h-80 overflow-y-auto"
+                      >
+                        {filteredBrokers.map((broker, index) => (
+                          <div
+                            key={broker.mc}
+                            onClick={() => handleSelectBroker(broker)}
+                            className={`px-4 py-3 cursor-pointer border-b border-gray-100 hover:bg-primary-50 transition-colors ${
+                              index === selectedIndex ? 'bg-primary-50' : ''
+                            }`}
+                          >
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <div className="font-semibold text-gray-900">{broker.name}</div>
+                                <div className="text-sm text-gray-600 mt-1">
+                                  {broker.city}, {broker.state}
+                                </div>
+                              </div>
+                              <div className="ml-4 text-sm font-medium text-primary-700">
+                                MC {broker.mc}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   <button
                     type="submit"
-                    disabled={loading || !mcNumber.trim()}
-                    className="px-8 py-3 bg-success-600 text-white rounded-lg font-semibold hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-success-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    disabled={loading || (!mcNumber.trim() && !searchQuery.trim())}
+                    className="px-8 py-3 bg-success-600 text-white rounded-lg font-semibold hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-success-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
                   >
                     {loading ? 'Verifying...' : 'Verify Broker'}
                   </button>
                 </div>
+                {mcNumber && (
+                  <p className="text-sm text-primary-700 mt-2 text-left font-medium">
+                    ✓ Selected: MC {mcNumber}
+                  </p>
+                )}
                 <p className="text-xs text-gray-500 mt-2 text-left">
                   Free instant verification • No credit card required • 3 checks per day
                 </p>

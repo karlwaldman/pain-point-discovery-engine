@@ -74,6 +74,15 @@ async function generateBrokerVerificationLinks(mcNumber: string) {
       priority: 8,
       note: 'Requires Truckstop membership',
     },
+
+    // 9. BrokerWatchlist.com (Free fraud reports)
+    brokerWatchlist: {
+      name: 'BrokerWatchlist - Fraud & Scam Reports',
+      url: `https://www.brokerwatchlist.com/`,
+      description: 'Free database of broker fraud reports, scams, and carrier complaints. Search by company name from FMCSA.',
+      priority: 9,
+      note: 'Free resource - Search by company name once you have it from FMCSA',
+    },
   };
 
   return {
