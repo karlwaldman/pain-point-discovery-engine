@@ -194,6 +194,166 @@ REDDIT_SEARCH_QUERIES = [
     "biggest problem",
 ]
 
+# HackerNews search queries (for Algolia API)
+HACKERNEWS_SEARCH_QUERIES = [
+    # Frustration expressions
+    "why is there no",
+    "frustrated with",
+    "hate dealing with",
+    "sick of",
+
+    # Solution seeking
+    "looking for tool",
+    "does anyone know",
+    "recommendations for",
+    "what do you use",
+    "how do you handle",
+
+    # Pain/problem statements
+    "pain point",
+    "biggest problem",
+    "struggling with",
+    "challenging to",
+
+    # Building/seeking
+    "wish someone would build",
+    "better way to",
+    "should be easier",
+
+    # Specific use cases
+    "tool for managing",
+    "software for",
+    "alternative to",
+    "cheaper than",
+]
+
+# Stack Overflow - Technical B2B Pain Points
+# Tags to monitor (high-value B2B areas)
+STACKOVERFLOW_TAGS = [
+    'devops',
+    'deployment',
+    'monitoring',
+    'kubernetes',
+    'docker',
+    'ci-cd',
+    'infrastructure',
+    'scalability',
+    'performance',
+    'database',
+    'api',
+    'microservices',
+    'logging',
+    'security',
+    'authentication',
+]
+
+# Keywords for Stack Overflow searches (technical pain signals)
+STACKOVERFLOW_KEYWORDS = [
+    'expensive',
+    'difficult to',
+    'no good way',
+    'struggling with',
+    'better alternative',
+    'how to properly',
+    'best practice for',
+    'overhead of',
+    'complicated to',
+    'pain to manage',
+    'hard to maintain',
+    'slow performance',
+    'lacking',
+    'missing feature',
+    'workaround for',
+]
+
+# GitHub Issues - Feature Requests & Product Gaps
+# Popular B2B/DevOps repositories to monitor
+GITHUB_REPOSITORIES = [
+    'kubernetes/kubernetes',
+    'docker/docker-ce',
+    'prometheus/prometheus',
+    'grafana/grafana',
+    'hashicorp/terraform',
+    'hashicorp/vault',
+    'vercel/next.js',
+    'ansible/ansible',
+    'elastic/elasticsearch',
+    'jetstack/cert-manager',
+]
+
+# Issue labels indicating pain points
+GITHUB_LABELS = [
+    'feature-request',
+    'enhancement',
+    'improvement',
+    'question',
+    'needs-discussion',
+]
+
+# Keywords for GitHub issue search
+GITHUB_KEYWORDS = [
+    'missing',
+    'should support',
+    'would be nice',
+    'difficult to',
+    'no way to',
+    'frustrating',
+    'workaround',
+    'lacking',
+]
+
+# Domain-Specific: Cargo Theft & Freight Security
+CARGO_THEFT_KEYWORDS = [
+    'cargo theft',
+    'freight fraud',
+    'truck theft',
+    'double brokering',
+    'stolen cargo',
+    'load theft',
+    'trailer theft',
+    'cargo security',
+    'freight scam',
+    'fake carrier',
+    'carrier fraud',
+    'truck hijacking',
+    'cargo insurance fraud',
+    'stolen freight',
+    'load board scam',
+    'carrier identity theft',
+    'cargo tracking',
+    'fleet security',
+    'warehouse theft',
+    'in-transit theft',
+]
+
+CARGO_THEFT_PAIN_PHRASES = [
+    'lost shipment',
+    'stolen load',
+    'fraud on load board',
+    'carrier never delivered',
+    'fake MC number',
+    'cargo disappeared',
+    'truck went dark',
+    'GPS stopped working',
+    'driver unresponsive',
+    'missing trailer',
+    'warehouse break-in',
+    'theft claim denied',
+    'insurance wont cover',
+    'carrier verification failed',
+    'fraudulent pickup',
+]
+
+CARGO_THEFT_SUBREDDITS = [
+    'Truckers',
+    'Logistics',
+    'FreightBrokers',
+    'supplychain',
+    'trucking',
+    'Transportation',
+    'logistics',
+]
+
 # Twitter API v2 query operators
 def build_twitter_query(keywords: list, exclude_retweets: bool = True) -> str:
     """

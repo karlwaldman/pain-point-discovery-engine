@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ opportunity.title }} | Pain Point Discovery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Pain Point Discovery Engine</h1>
+            <p class="breadcrumb"><a href="/">← Back to Dashboard</a></p>
+        </header>
+
+        <!-- Opportunity Details -->
+        <div class="opportunity-detail">
+            <div class="detail-header">
+                <div class="detail-score score-{{ 'high' if opportunity.score >= 70 else 'medium' if opportunity.score >= 50 else 'low' }}">
+                    {{ opportunity.score }}/100
+                </div>
+                <div class="detail-title-section">
+                    <h2>{{ opportunity.title }}</h2>
+                    <div class="detail-meta">
+                        <span>First seen: {{ opportunity.first_seen.split('T')[0] }}</span>
+                        <span>Last seen: {{ opportunity.last_seen.split('T')[0] }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-description">
+                <h3>Description</h3>
+                <p>{{ opportunity.description }}</p>
+            </div>
+
+            <!-- Related Posts -->
+            <div class="related-posts">
+                <h3>Related Posts ({{ tweets|length }})</h3>
+
+                {% for tweet in tweets %}
+                <div class="post-card">
+                    <div class="post-header">
+                        <span class="post-author">@{{ tweet.author_username }}</span>
+                        <span class="post-date">{{ tweet.created_at.split('T')[0] }}</span>
+                    </div>
+
+                    <div class="post-text">
+                        {{ tweet.text }}
+                    </div>
+
+                    <div class="post-engagement">
+                        <span>❤️ {{ tweet.likes }}</span>
+                        <span>🔄 {{ tweet.retweets }}</span>
+                        <span>💬 {{ tweet.replies }}</span>
+                    </div>
+
+                    {% if tweet.pain_analysis %}
+                    <div class="pain-analysis">
+                        <h4>Pain Analysis</h4>
+                        <div class="pain-scores">
+                            <div class="pain-score-item">
+                                <span class="pain-label">Frustration:</span>
+                                <span class="pain-value">{{ tweet.pain_analysis.frustration_score }}/10</span>
+                            </div>
+                            <div class="pain-score-item">
+                                <span class="pain-label">Budget Signal:</span>
+                                <span class="pain-value">{{ tweet.pain_analysis.budget_signal_score }}/10</span>
+                            </div>
+                        </div>
+
+                        {% if tweet.pain_analysis.pain_keywords %}
+                        <div class="pain-keywords">
+                            <strong>Pain Keywords:</strong>
+                            {% for keyword in tweet.pain_analysis.pain_keywords.split(',') %}
+                            <span class="keyword-badge">{{ keyword.strip() }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {% if tweet.pain_analysis.products_mentioned %}
+                        <div class="pain-products">
+                            <strong>Products Mentioned:</strong>
+                            {% for product in tweet.pain_analysis.products_mentioned.split(',') %}
+                            <span class="product-badge">{{ product.strip() }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Insights -->
+            <div class="insights">
+                <h3>Business Insights</h3>
+                <div class="insight-cards">
+                    <div class="insight-card">
+                        <h4>Opportunity Score: {{ opportunity.score }}/100</h4>
+                        <p>
+                            {% if opportunity.score >= 70 %}
+                            <strong>HIGH VALUE:</strong> This is a significant pain point with strong market signals.
+                            Consider building a solution or validating with more research.
+                            {% elif opportunity.score >= 50 %}
+                            <strong>MEDIUM VALUE:</strong> Worth investigating further. Look for more evidence of
+                            willingness to pay and market size.
+                            {% else %}
+                            <strong>EXPLORE:</strong> Interesting pain point but needs more validation before
+                            committing resources.
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="insight-card">
+                        <h4>Next Steps</h4>
+                        <ul>
+                            <li>Research existing solutions in this space</li>
+                            <li>Interview potential users to validate pain</li>
+                            <li>Check if there are competitors solving this</li>
+                            <li>Estimate market size and willingness to pay</li>
+                            <li>Build a quick MVP to test the solution</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p><a href="/">← Back to Dashboard</a></p>
+    </footer>
+</body>
+</html>

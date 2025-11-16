@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pain Point Discovery Engine</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Pain Point Discovery Engine</h1>
+            <p class="tagline">Finding business opportunities in developer frustration</p>
+        </header>
+
+        <!-- Stats Dashboard -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.total }}</div>
+                <div class="stat-label">Total Opportunities</div>
+            </div>
+            <div class="stat-card highlight">
+                <div class="stat-value">{{ stats.high_value }}</div>
+                <div class="stat-label">High-Value (70+)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.avg_score }}</div>
+                <div class="stat-label">Average Score</div>
+            </div>
+        </div>
+
+        <!-- Source Breakdown -->
+        <div class="sources-section">
+            <h3>Sources</h3>
+            <div class="sources-grid">
+                {% for source, count in sources.items() %}
+                <div class="source-badge">
+                    <span class="source-name">{{ source }}</span>
+                    <span class="source-count">{{ count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <form method="get" action="/">
+                <div class="filter-group">
+                    <label for="days">Time Range:</label>
+                    <select name="days" id="days" onchange="this.form.submit()">
+                        <option value="1" {% if filters.days == 1 %}selected{% endif %}>Today</option>
+                        <option value="7" {% if filters.days == 7 %}selected{% endif %}>Last 7 days</option>
+                        <option value="30" {% if filters.days == 30 %}selected{% endif %}>Last 30 days</option>
+                        <option value="90" {% if filters.days == 90 %}selected{% endif %}>Last 90 days</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="min_score">Min Score:</label>
+                    <select name="min_score" id="min_score" onchange="this.form.submit()">
+                        <option value="30" {% if filters.min_score == 30 %}selected{% endif %}>30+</option>
+                        <option value="40" {% if filters.min_score == 40 %}selected{% endif %}>40+</option>
+                        <option value="50" {% if filters.min_score == 50 %}selected{% endif %}>50+</option>
+                        <option value="60" {% if filters.min_score == 60 %}selected{% endif %}>60+</option>
+                        <option value="70" {% if filters.min_score == 70 %}selected{% endif %}>70+</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="source">Source:</label>
+                    <select name="source" id="source" onchange="this.form.submit()">
+                        <option value="all" {% if filters.source == 'all' %}selected{% endif %}>All Sources</option>
+                        <option value="hackernews" {% if filters.source == 'hackernews' %}selected{% endif %}>HackerNews</option>
+                        <option value="stackoverflow" {% if filters.source == 'stackoverflow' %}selected{% endif %}>Stack Overflow</option>
+                        <option value="github" {% if filters.source == 'github' %}selected{% endif %}>GitHub</option>
+                        <option value="reddit" {% if filters.source == 'reddit' %}selected{% endif %}>Reddit</option>
+                        <option value="twitter" {% if filters.source == 'twitter' %}selected{% endif %}>Twitter</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <!-- Opportunities List -->
+        <div class="opportunities">
+            {% if opportunities %}
+                {% for opp in opportunities %}
+                <div class="opportunity-card">
+                    <div class="opp-header">
+                        <div class="opp-score score-{{ 'high' if opp.score >= 70 else 'medium' if opp.score >= 50 else 'low' }}">
+                            {{ opp.score }}
+                        </div>
+                        <div class="opp-title-section">
+                            <h3 class="opp-title">
+                                <a href="/opportunity/{{ opp.id }}">{{ opp.title }}</a>
+                            </h3>
+                            <div class="opp-meta">
+                                <span class="opp-date">{{ opp.first_seen.split('T')[0] }}</span>
+                                {% if opp.tweet_count %}
+                                <span class="opp-tweets">{{ opp.tweet_count }} related posts</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="opp-description">
+                        {{ opp.description[:300] }}...
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-results">
+                    <h2>No opportunities found</h2>
+                    <p>Try adjusting your filters or run the collector:</p>
+                    <code>python scripts/collect_all.py</code>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        <p>Pain Point Discovery Engine | Last updated: {{ stats.total }} opportunities found</p>
+    </footer>
+</body>
+</html>

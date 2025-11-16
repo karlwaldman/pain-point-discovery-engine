@@ -143,18 +143,9 @@ def collect_from_hackernews():
 
     load_dotenv()
 
-    # Search queries for pain points
-    pain_queries = [
-        "why is there no",
-        "frustrated with",
-        "looking for tool",
-        "does anyone know",
-        "pain point",
-        "biggest problem",
-        "wish someone would build",
-        "struggling with",
-        "better way to",
-    ]
+    # Import search queries from pain_keywords
+    from backend.pain_keywords import HACKERNEWS_SEARCH_QUERIES
+    pain_queries = HACKERNEWS_SEARCH_QUERIES
 
     total_found = 0
     total_stored = 0

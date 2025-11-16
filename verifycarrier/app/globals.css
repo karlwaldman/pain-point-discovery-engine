@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 255, 255, 255;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+/* Trust-focused professional styles */
+.trust-gradient {
+  background: linear-gradient(135deg, #0A2540 0%, #075985 100%);
+}
+
+.verified-badge {
+  @apply inline-flex items-center rounded-full bg-success-100 px-3 py-1 text-sm font-medium text-success-800 ring-1 ring-inset ring-success-600/20;
+}
+
+.fraud-alert {
+  @apply inline-flex items-center rounded-full bg-danger-100 px-3 py-1 text-sm font-medium text-danger-800 ring-1 ring-inset ring-danger-600/20;
+}
+
+.caution-badge {
+  @apply inline-flex items-center rounded-full bg-warning-100 px-3 py-1 text-sm font-medium text-warning-800 ring-1 ring-inset ring-warning-600/20;
+}
